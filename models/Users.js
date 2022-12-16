@@ -23,7 +23,8 @@ const usersSchema = new Schema(
         }
     ],
     friends:{
-        type: Number
+        type: [this]
+        
     }
     },
     {

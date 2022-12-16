@@ -49,7 +49,7 @@ module.exports = {
         )
         .then((user) => {
             !user 
-            ? res.status(500).json({message:"No user Found"})
+            ? res.status(404).json({message:"No user Found"})
             : res.status(200).json({message:"Success with user update"})
         })
         .catch((err) => {console.error(err), res.status(500).json(err)})
@@ -61,11 +61,23 @@ module.exports = {
         })
         .then((user) => {
             !user 
-            ? res.status(500).json({message:'Unable to find user'})
+            ? res.status(404).json({message:'Unable to find user'})
             : Thoughts.deleteMany({_id:req.params.userName})
         })
         .then(() => res.status(200).json({message:"User and thoughts deleted"}))
         .catch((err) => {console.error(err), res.status(500).json(err)})
+    },
+
+    addFriend(req,res) {
+        Users.findOneAndUpdate(
+            { _id: req.params.userName },
+            { $addToSet: req.body },
+            { runValidator: true, new: true }
+        )
+        .then((friend) => 
+            !friend
+            ? res.status(404).json({message:'Unable to locate user'})
+            : res.status(200).json(friend))
     }
 
 }
