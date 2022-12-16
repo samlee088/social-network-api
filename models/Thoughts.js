@@ -1,5 +1,5 @@
 const {Schema, model} = require('mongoose');
-const reactions = require('./Reaction')
+const Reaction = require('./Reaction')
 
 /* need to adjust date time 'Use a getter method to format the timestamp on query'  */
 const thoughtsSchema = new Schema(
@@ -18,22 +18,22 @@ const thoughtsSchema = new Schema(
         type: String,
         required: true
     },
-    reactions: [reactions]
+    reactions: [Reaction]
     },
     {
-        toJson:{
-            virtuals:true
+        toJSON: {
+          virtuals: true,
         },
-        id:true
-    }
+        id: false,
+      }
 )
 
 
 thoughtsSchema
-    .virtual('getReactions')
+    .virtual('reactionCount')
     .get(function() {
         return this.reactions.length
-    });
+    })
 
 
 
