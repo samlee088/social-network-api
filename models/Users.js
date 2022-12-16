@@ -41,7 +41,7 @@ usersSchema
     .virtual('getFriends')
     .get(function() {
         return this.friends.length
-    })
+    });
     
 const Users = model('Users', usersSchema);
 

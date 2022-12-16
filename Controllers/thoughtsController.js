@@ -7,19 +7,19 @@ module.exports = {
 
     getThoughts(req,res) {
         Thoughts.find()
+            .select('-__v')
+            .populate('reactions')
         .then ((thoughts) => res.json(thoughts))
         .catch((err) => res.status(500).json(err))
     },
 
     getSingleThought(req,res) {
-        Thoughts.findOne({_id: req.params.userName})
-        .select()
+        Thoughts.findOne({_id: req.params.thoughtId})
+        .select('-__v')
         .lean()
+        .populate('reactions')
         .then ( async (thought) => {
-            !thought ? res.status(404).json({message:'No thoughts found'}) : res.json( {
-                thoughtText,
-                totalFriends: await friendsCount()
-            })
+            !thought ? res.status(404).json({message:'No thoughts found'}) : res.json({thought})
         })
         .catch((err) => {
             console.error(err);
@@ -31,14 +31,14 @@ module.exports = {
         Thoughts.create(req.body) 
         .then((thought) => {
             return Users.findOneAndUpdate(
-                {_id:req.params.thoughtId},
-                {$addToSet: {thoughts: thought._id}},
-                {new:true}
+                { userName: req.body.userName },
+                { $addToSet: {thoughts: thought._id}} ,
+                { runValidators: true, new: true }
             )
         })
-        .then((user) => 
-            !user
-            ? res.status(404).json({message:"Unable to locate user"})
+        .then((thought) => 
+            !thought
+            ? res.status(200).json(thought)
             : res.status(200).json({message:"Thought added to user"}))
         .catch((err) => {console.error(err), res.status(500).json(err)});
     },

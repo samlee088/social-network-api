@@ -1,31 +1,16 @@
 const express = require('express');
+const db = require('./config/connection');
+const routes = require('./routes');
 
-const mongodb = require('mongodb').MongoClient;
-
+const PORT = process.env.PORT || 3001
 const app = express();
-const port = 3001;
 
-const connectionStringURI = `mongodb://127.0.0.1:27017/shelterDB`;
-
-let db;
-
-mongodb.connect(
-    connectionStringURI,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    (err, client) => {
-        db = client.db();
-        app.listen(port, () => {
-            console.log(`App listening at http://localhost:${port}`);
-        })
-    }
-)
-
-
+app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+app.use(routes);
 
-/* This is where the mongodb routes will go */
-
-
-
-
-
+db.once('open', () => {
+    app.listen(PORT, () => {
+        console.log(`API server for application running on port ${PORT}`);
+    })
+})

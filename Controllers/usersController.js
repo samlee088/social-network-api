@@ -14,14 +14,18 @@ module.exports = {
 
   getUsers(req,res) {
     Users.find()
+        .select('-__v')
+        .populate('thoughts')
     .then((users) => res.json(users))
     .catch((err) => res.status(500).json(err));
   },
 
   getSingleUser(req,res) {
     Users.findOne({_id: req.params.userName})
-        .select()
+        .select('-__v')
         .lean()
+        .populate('thoughts')
+        
         .then(async (user) => {
             !user ? res.status(404).json({message: 'Unable to locate user with that user name'}) : res.json({
                 username, 
