@@ -2,7 +2,6 @@ const {Schema, model, mongoose} = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 require('mongoose-type-email');
 
-/* still needing email validation */
 const usersSchema = new Schema(
     {
     userName: {
@@ -22,10 +21,6 @@ const usersSchema = new Schema(
             ref: 'Thoughts'
         }
     ],
-    // friends:[
-    //         {type: Schema.Types.ObjectId,
-    //         ref: 'Users' }
-    //     ]
     friends:[this]
     },
     {

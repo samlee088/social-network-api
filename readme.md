@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a project that was created to store, manipulate, and/or delete data using for a potential social media application. The project was created with an emphasis on the usage of Express.js for routing, MongoDB database and the Mongoose ODM.
+This is a project that was created to store, manipulate, and/or delete data to be used for a potential social media application. The project was created with an emphasis on the usage of Express.js for routing, MongoDB database and the Mongoose ODM.
 
 ## Table of Contents
 

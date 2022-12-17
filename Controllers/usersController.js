@@ -1,6 +1,6 @@
 const {Users, Thoughts} = require('../models')
 
-
+/* list of all of the users promises that gets added to users routes */
 module.exports = {
 
     getUsers(req,res) {
@@ -10,9 +10,8 @@ module.exports = {
         .then((users) => res.json(users))
         .catch((err) => res.status(500).json(err));
     },
-
     getSingleUser(req,res) {
-        Users.findOne({_id: req.params.userId})
+        Users.findOne({ _id: req.params.userId })
             .select('-__v')
             .populate('thoughts')
         .then((user) => {
@@ -25,19 +24,16 @@ module.exports = {
                 return res.status(500).json(err);
         })
     },
-
-
     createUser(req,res) {
         Users.create(req.body)
         .then((user) => res.status(200).json(user))
         .catch((err) => res.status(500).json(err))
     },
-
     updateUser(req,res) {
         Users.findOneAndUpdate(
-            {_id:req.params.userId},
-            {$set:req.body},
-            {validator:true, new:true}
+            { _id: req.params.userId },
+            { $set: req.body },
+            { runValidators: true, new: true }
         )
         .then((user) => {
             !user 
@@ -46,7 +42,6 @@ module.exports = {
         })
         .catch((err) => {console.error(err), res.status(500).json(err)})
     },
-    
     deleteUser(req,res) {
         Users.findOneAndDelete({
             _id: req.params.userId
@@ -56,25 +51,23 @@ module.exports = {
               return ;
             } else {
             return Thoughts.deleteMany(
-                { userName: user.userName},
+                { userName: user.userName },
                 { new: true }
                 )
             }
         })
         .then((thoughts) => 
-
             !thoughts
             ? res.status(404).json({message:"User deleted, but no thoughts found"})
             : res.status(200).json({message:"User and thought deleted"})
         )
         .catch((err) => {console.error(err), res.status(500).json(err)})
     },
-
     addFriend(req,res) {
         Users.findOneAndUpdate(
             { _id: req.params.userId },
             { $addToSet: {friends: req.params.friendId }},
-            { runValidator: true, new: true }
+            { runValidators: true, new: true }
         )
         .then((friend) => 
             !friend
@@ -82,12 +75,11 @@ module.exports = {
             : res.status(200).json(friend))
         .catch((err) => res.status(500).json(err))
     },
-
     deleteFriend(req,res) {
         Users.findOneAndUpdate(
             { _id: req.params.userId },
             { $pull: {friends: req.params.friendId} },
-            { runValidator: true, new: true }
+            { runValidators: true, new: true }
         )
         .then((user) => 
             !user

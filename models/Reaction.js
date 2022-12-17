@@ -1,6 +1,5 @@
 const {Schema, Types} = require('mongoose');
 
-/* need to adjust date time 'Use a getter method to format the timestamp on query'  */
 const reactionSchema = new Schema({
     reactionId: {
         type: Schema.Types.ObjectId,

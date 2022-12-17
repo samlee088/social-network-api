@@ -1,7 +1,7 @@
 const {Schema, model} = require('mongoose');
 const Reaction = require('./Reaction')
 const moment = require('moment');
-/* need to adjust date time 'Use a getter method to format the timestamp on query'  */
+
 const thoughtsSchema = new Schema(
     {
     thoughtText: {
@@ -32,20 +32,11 @@ const thoughtsSchema = new Schema(
       }
 )
 
-
 thoughtsSchema
     .virtual('reactionCount')
     .get(function() {
         return this.reactions.length
     })
-    // .get(function() {
-    //     return moment(this.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    // })
-    // .set(function(v) {
-    //     this.createAt = v
-    // })
-
-
 
 const Thoughts = model('Thoughts', thoughtsSchema);
 

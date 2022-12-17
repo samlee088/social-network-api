@@ -1,8 +1,6 @@
 const {Users, Thoughts} = require('../models');
 
-
-
-
+/* list of all of the thoughts promises that gets added to thoughts routes */
 module.exports = {
 
     getThoughts(req,res) {
@@ -12,9 +10,8 @@ module.exports = {
         .then ((thoughts) => res.json(thoughts))
         .catch((err) => res.status(500).json(err))
     },
-
     getSingleThought(req,res) {
-        Thoughts.findOne({_id: req.params.thoughtId})
+        Thoughts.findOne({ _id: req.params.thoughtId })
         .select('-__v')
         .populate('reactions')
         .then ((thought) => {
@@ -25,7 +22,6 @@ module.exports = {
             res.status(500).json(err);
         })
     },
-
     createThought(req,res) {
         Thoughts.create(req.body) 
         .then((thought) => 
@@ -33,7 +29,7 @@ module.exports = {
             ? res.status(404).json({message:"Unable to add thought"})
             : Users.findOneAndUpdate(
                 { userName: req.body.userName },
-                { $addToSet: {thoughts: thought._id}} ,
+                { $addToSet: {thoughts: thought._id }} ,
                 { runValidators: true, new: true }
             )
         )
@@ -43,12 +39,11 @@ module.exports = {
             : res.status(200).json(user))
         .catch((err) => {console.error(err), res.status(500).json(err)});
     },
-
     updateThought(req,res) {
         Thoughts.findOneAndUpdate(
-            { _id: req.params.thoughtId},
-            { $set: req.body},
-            { runValidators:true, new:true}
+            { _id: req.params.thoughtId },
+            { $set: req.body },
+            { runValidators: true, new: true }
         )
         .then((thought) => 
             !thought
@@ -57,18 +52,17 @@ module.exports = {
         )
         .catch((err) => {console.log(err),res.status(500).json(err)})
     },
-
     deleteThought(req,res) {
         Thoughts.findOneAndDelete(
-            {_id: req.params.thoughtId}
+            { _id: req.params.thoughtId }
         )
         .then((thought) => 
             !thought
             ? res.status(404).json({message:"Unable to locate thought"})
             :   Users.findOneAndUpdate(
-                    {thoughts:req.params.thoughtId},
-                    {$pull:{thoughts:req.params.thoughtId}},
-                    {new:true}
+                    { thoughts: req.params.thoughtId },
+                    { $pull: {thoughts:req.params.thoughtId} },
+                    { new: true }
             ))
             .then((user) => 
                 !user
@@ -77,12 +71,11 @@ module.exports = {
             )
         .catch((err) => res.status(500).json(err))    
     },
-
     addThoughtReaction (req,res) {
         Thoughts.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $addToSet: {reactions: req.body} },
-            { runValidators:true, new:true }
+            { $addToSet: {reactions: req.body } },
+            { runValidators: true, new: true }
         )
         .then((thought) => {
             !thought
@@ -91,20 +84,16 @@ module.exports = {
         })
         .catch((err) => res.status(500).json(err))
     },
-
     removeThoughtReaction(req,res) {
         Thoughts.findOneAndUpdate(
             { _id: req.params.thoughtId },
             { $pull: {reactions: {reactionId: req.params.reactionId } } },
-            { runValidators:true, new: true }
+            { runValidators: true, new: true }
         )
         .then((thought) =>
             !thought
-            ? res.status(404).json({message:"Unable to location thought with that ID"})
+            ? res.status(404).json({message:"Unable to locate thought with that ID"})
             : res.status(200).json(thought))
         .catch((err) => res.status(500).json(err))
     }
-
-
-
 }
