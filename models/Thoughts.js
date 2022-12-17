@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 const Reaction = require('./Reaction')
-
+const moment = require('moment');
 /* need to adjust date time 'Use a getter method to format the timestamp on query'  */
 const thoughtsSchema = new Schema(
     {
@@ -12,7 +12,10 @@ const thoughtsSchema = new Schema(
     },
     createdAt: {
         type:Date,
-        default: Date.now
+        default: Date.now,
+        get: (date) => {
+            return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+        }
     },
     userName:{
         type: String,
@@ -23,6 +26,7 @@ const thoughtsSchema = new Schema(
     {
         toJSON: {
           virtuals: true,
+          getters: true
         },
         id: false,
       }
@@ -34,6 +38,12 @@ thoughtsSchema
     .get(function() {
         return this.reactions.length
     })
+    // .get(function() {
+    //     return moment(this.createdAt).format('MMMM Do YYYY, h:mm:ss a')
+    // })
+    // .set(function(v) {
+    //     this.createAt = v
+    // })
 
 
 

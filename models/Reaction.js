@@ -20,6 +20,12 @@ const reactionSchema = new Schema({
         type: Date,
         default: Date.now,
     }
-})
+},
+{
+toJSON:
+    {getters:true},
+    id:false
+}
+)
 
 module.exports = reactionSchema

@@ -17,7 +17,7 @@ module.exports = {
         Thoughts.findOne({_id: req.params.thoughtId})
         .select('-__v')
         .populate('reactions')
-        .then ( async (thought) => {
+        .then ((thought) => {
             !thought ? res.status(404).json({message:'No thoughts found'}) : res.json({thought})
         })
         .catch((err) => {
@@ -44,9 +44,9 @@ module.exports = {
 
     updateThought(req,res) {
         Thoughts.findOneAndUpdate(
-            {_id: req.params.thoughtId},
-            {$set: req.body},
-            {runValidators:true, new:true}
+            { _id: req.params.thoughtId},
+            { $set: req.body},
+            { runValidators:true, new:true}
         )
         .then((thought) => 
             !thought

@@ -1,6 +1,6 @@
-const {Schema, model} = require('mongoose');
+const {Schema, model, mongoose} = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-const thoughtsSchema = require('./Thoughts')
+require('mongoose-type-email');
 
 /* still needing email validation */
 const usersSchema = new Schema(
@@ -12,21 +12,21 @@ const usersSchema = new Schema(
         trim:true
     },
     email: {
-        type:String,
+        type:mongoose.SchemaTypes.Email,
         unique:true, 
-        required:true 
+        required:true,
     },
-    // thoughts: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'Thoughts'
-    //     }
-    // ],
-    thoughts: [this],
-    friends:[
-            {type: Schema.Types.ObjectId,
-            ref: 'Users' }
-        ]
+    thoughts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Thoughts'
+        }
+    ],
+    // friends:[
+    //         {type: Schema.Types.ObjectId,
+    //         ref: 'Users' }
+    //     ]
+    friends:[this]
     },
     {
         toJSON: {
@@ -37,7 +37,7 @@ const usersSchema = new Schema(
     
 )
 
-
+usersSchema.plugin(uniqueValidator);
 usersSchema
     .virtual('friendsCount')
     .get(function() {

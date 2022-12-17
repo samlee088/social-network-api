@@ -1,15 +1,6 @@
 const {Users, Thoughts} = require('../models')
 
 
-const friendsCount = async () => 
-    Users.aggregate()
-
-    .then((numberOfFriends) => numberOfFriends)
-    .catch((err) => console.error(err), res.status(500).json({message:"Error with friend count"}));
-
-
-
-
 module.exports = {
 
     getUsers(req,res) {
@@ -21,16 +12,13 @@ module.exports = {
     },
 
     getSingleUser(req,res) {
-        Users.findOne({_id: req.params.userName})
+        Users.findOne({_id: req.params.userId})
             .select('-__v')
-            .lean()
             .populate('thoughts')
-            
-        .then(async (user) => {
-            !user ? res.status(404).json({message: 'Unable to locate user with that user name'}) : res.json({
-                username, 
-
-            })
+        .then((user) => {
+            !user 
+            ? res.status(404).json({message: 'Unable to locate user with that user name'}) 
+            : res.json(user)
         })
         .catch((err) => {
                 console.error(err);
@@ -64,19 +52,21 @@ module.exports = {
             _id: req.params.userId
         })
         .then((user) => {
-            !user 
-            ? res.status(404).json({message:'Unable to find user'})
-            : Thoughts.deleteMany(
-                { _id: req.params.userName},
+            if(!user) {
+              return ;
+            } else {
+            return Thoughts.deleteMany(
+                { userName: user.userName},
                 { new: true }
-            )
+                )
+            }
         })
         .then((thoughts) => 
+
             !thoughts
             ? res.status(404).json({message:"User deleted, but no thoughts found"})
             : res.status(200).json({message:"Thoughts deleted successfully"})
         )
-        // .then(() => res.status(200).json({message:"User and thoughts deleted"}))
         .catch((err) => {console.error(err), res.status(500).json(err)})
     },
 
