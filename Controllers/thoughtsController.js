@@ -28,17 +28,19 @@ module.exports = {
 
     createThought(req,res) {
         Thoughts.create(req.body) 
-        .then((thought) => {
-            return Users.findOneAndUpdate(
+        .then((thought) => 
+            !thought
+            ? res.status(404).json({message:"Unable to add thought"})
+            : Users.findOneAndUpdate(
                 { userName: req.body.userName },
                 { $addToSet: {thoughts: thought._id}} ,
                 { runValidators: true, new: true }
             )
-        })
-        .then((thought) => 
-            !thought
-            ? res.status(200).json(thought)
-            : res.status(200).json({message:"Thought added to user"}))
+        )
+        .then((user) => 
+            !user
+            ? res.status(200).json({message:"Thought added, but unable to find user"})
+            : res.status(200).json(user))
         .catch((err) => {console.error(err), res.status(500).json(err)});
     },
 
